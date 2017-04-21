@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" ng-app>
+  <head>
+    <base href="/angular-client">
+    <title>MQIO Hackathon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+    <script>
+      function MQIOController($scope, $http) {
+
+        $scope.clients = [];
+        $scope.geofences = [];
+        $scope.speedAlerts = [];
+        
+        $scope.getClients = function() {
+          console.log('get clients', $scope.clients);
+          $http.get('/clients')
+            .then(response => {
+              $scope.clients = response.data.clients;              
+              console.log('clients reeived', $scope.clients);
+              return $scope.clients;
+            }, console.error);
+        }
+        
+        $scope.getGeofences = function() {
+          console.log('get geofences');
+          $http.get('/geofences')
+            .then(response => {
+              $scope.geofences = response.data.geofences;
+              console.log('geofences received', $scope.geofences);
+              return $scope.geofences;
+            });
+        }
+        
+        $scope.getSpeedAlerts = function() {
+          console.log('get speed alerts');
+          $http.get('/speed-alerts')
+            .then(response => {
+              $scope.speedAlerts = response.data.speedAlerts;
+              console.log('speed alerts received', $scope.speedAlerts);
+              return $scope.speedAlerts;
+            })
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container" 
+      ng-controller="MQIOController">
+      <div class="page-header">
+        <h1>MQIO Hackathon Sample</h1>
+      </div>
+      <div class="row">
+        <div class="col-s6">
+          <button ng-click="getClients()">
+            Clients
+          </button>
+          <button ng-click="getGeofences()">
+            Geofences
+          </button>
+          <button ng-click="getSpeedAlerts()">
+            Speed Alerts
+          </button>
+        </div>
+        <div class="col-s6">
+          <div class="row geofence" 
+            ng-repeat="geofence in geofences">
+            {{ geofence }}
+          </div>
+          <div class="row client" 
+            ng-repeat="client in clients">
+            <div class="client-container col-s12">
+              <strong>{{client.appId}}-{{client.label}}</strong>
+              <!--<strong>{{client.clientSecret}}</strong>-->
+            </div>
+          </div>
+          <div class="row speed-alert" 
+            ng-repeat="speedAlert in speedAlerts">
+            {{ speedAlert }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/angular.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "mqio-web-boilerplate",
+  "version": "0.1.0",
+  "description": "Web Boilerplate to build on top of MapQuest.io platform",
+  "main": "server.js",
+  "repository": "",
+  "author": "David Kleriga <david.kleriga@mapquest.com>",
+  "dependencies": {
+    "@mapquest/io": "^0.3.1",
+    "async": "~0.2.8",
+    "express": "~3.2.4"
+  }
+}

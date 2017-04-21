@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <base href="/jquery-client">
+    <title>MQIO Hackathon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>MQIO Hackathon Sample</h1>
+      </div>
+      <div class="row">
+        <div class="col-s12">
+          <button class="get-clients">
+            Clients
+          </button>
+          <button class="get-geofences">
+            Geofences
+          </button>
+          <button class="get-speed-alerts">
+            Speed Alerts
+          </button>
+        </div>
+        <div class="col-s12">
+          <ul class="client-list row">
+              
+              
+          </ul>
+          <ul class="geofence-list row">
+              
+              
+          </ul>
+          <ul class="speed-alert-list row">
+              
+              
+          </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="templates" hidden>
+        <div class="client-template">
+            <label class="client-text-label">
+                
+            </label>
+        </div>
+        <div class="geofence-template">
+            <label class="geofence-text-label">
+                
+            </label>
+        </div>
+        <div class="speed-alert-template">
+            <label class="speed-alert-text-label">
+                
+            </label>
+        </div>
+    </div>
+    
+    
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+      var MQIOController = {
+        clients: [],
+        geofences: [],
+        speedAlerts: [],
+        
+        getClients() {
+            
+            return $.getJSON('/clients')
+                .then(function(response) {
+                    var clients = response.clients || [];
+                    console.log('client response', clients);
+                    return MQIOController.clients = clients;
+                    return clients;
+                })
+        },
+        
+        getGeofences() {
+            
+            return $.getJSON('/geofences')
+                .then(function(response) {
+                    var geofences = response.geofences || [];
+                    console.log('geofences response', geofences);
+                    MQIOController.geofences = geofences;
+                    return geofences;
+                })
+        },
+        
+        getSpeedAlerts() {
+            
+            return $.getJSON('/speed-alerts')
+                .then(function(response) {
+                    var speedAlerts = response.speedAlerts || [];
+                    console.log('speed alert response', speedAlerts);
+                    MQIOController.speedAlerts = speedAlerts;
+                    return speedAlerts;
+                })
+        }
+          
+      };
+      
+      
+      $(function onReady() {
+        $('button.get-clients').on('click', function onClick(event) {
+            console.log('get client click', event);
+            var clientList = $('.client-list');
+            MQIOController.getClients()
+                .then(function(clients) {
+                    console.log('received clients', clients);
+                    clients.forEach(function(client) {
+                       var clientRow = $('.templates .client-template').clone(); 
+                       var clientTextValue = `${client.label}-${client.clientId}`;
+                       console.log('client text value', clientTextValue);
+                       clientRow.find('.client-text-label').text(clientTextValue);
+                       clientRow.prependTo(clientList);
+                    });
+                    return clients;
+                });
+        });
+        
+        $('button.get-geofences').on('click', function onClick(event) {
+            console.log('get geofences click', event);
+            var geofenceList = $('.geofence-list');
+            MQIOController.getGeofences()
+                .then(function(geofences) {
+                    console.log('received geofences', geofences);
+                    geofences.forEach(function(geofence) {
+                       var geofenceRow = $('.templates .geofence-template').clone(); 
+                       var geofenceTextValue = `${geofence.region.latitude}, ${geofence.region.longitude}`;
+                       console.log('geofence text value', geofenceTextValue);
+                       geofenceRow.find('.geofence-text-label').text(geofenceTextValue);
+                       geofenceRow.prependTo(geofenceList);
+                    });
+                    return geofences;
+                });
+        });
+        
+        $('button.get-speed-alerts').on('click', function onClick(event) {
+            console.log('get speed alert click', event);
+            var speedAlertList = $('.speed-alert-list');
+            MQIOController.getSpeedAlerts()
+                .then(function(speedAlerts) {
+                    console.log('received speedAlerts', speedAlerts);
+                    speedAlerts.forEach(function(speedAlert) {
+                       var speedAlertRow = $('.templates .speed-alert-template').clone(); 
+                       var speedAlertTextValue = `${speedAlert.maxSpeed.speed}-(${speedAlert.speedAlertId})`;
+                       console.log('speedAlert text value', speedAlertTextValue);
+                       speedAlertRow.find('.speed-alert-text-label').text(speedAlertTextValue);
+                       speedAlertRow.prependTo(speedAlertList);
+                    });
+                    return speedAlerts;
+                });
+        });
+      });
+    </script>
+  </body>
+</html>
